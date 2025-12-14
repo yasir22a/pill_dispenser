@@ -1,0 +1,19 @@
+ESP32 Microcontroller – Controls the system, manages scheduling, motors, alerts, and web connectivity
+
+DC Motor / Servo Motor(N20 MOTOR) – Dispenses pills from containers
+
+Motor Driver (DRV8833) – Drives motors safely from ESP32
+
+RTC Module (DS1307) – Maintains accurate date and time
+
+Speaker / Buzzer – Provides voice and alert notifications
+
+Pill Containers – Stores medicines separately
+
+Power Supply / Battery – Powers the entire system
+
+Connecting Wires & PCB – Electrical connections and mounting
+
+ISD MAX9814 AUDIO MODULE 
+
+PIEZO DISC SENSOR TO CHANGE MECHANICAL STRESS INTO ELECTRICAL SIGNAL TO STOP MOTOR 
