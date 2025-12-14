@@ -14,6 +14,6 @@ Power Supply / Battery – Powers the entire system
 
 Connecting Wires & PCB – Electrical connections and mounting
 
-ISD MAX98357 AUDIO MODULE 
+ISD MAX98357A AUDIO MODULE 
 
 PIEZO DISC SENSOR TO CHANGE MECHANICAL STRESS INTO ELECTRICAL SIGNAL TO STOP MOTOR 
