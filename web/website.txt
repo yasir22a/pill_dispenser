@@ -1,0 +1,101 @@
+// WEBSITE PARTS
+// ==========================================
+const char UI_PART_1[] PROGMEM = R"rawliteral(
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pill Dispenser</title><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Roboto',sans-serif;background:#f6f7fb;color:#222;padding:18px}
+header{max-width:1000px;margin:0 auto 18px auto;text-align:center}h1{font-size:28px;display:inline-block;margin-right:8px}
+.byline{font-size:13px;color:#666;margin-top:6px}.container-grid{max-width:1000px;margin:16px auto;display:flex;flex-direction:column;gap:18px}
+.container-block{background:#fff;border-radius:10px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.06);border-top:6px solid transparent}
+.container-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.container-header h2{margin:0;font-size:20px;color:#1f3b4d}
+.actions button,.upload-btn-wrapper button{background:#6c5ce7;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;margin-left:8px}
+table{width:100%;border-collapse:collapse;margin-top:6px}th,td{padding:10px;text-align:left;font-size:14px;border-bottom:1px solid rgba(0,0,0,0.06)}
+th{color:#444}.disabled{opacity:0.6}#container1-block{background:#dfeeff;border-top-color:#6ea8ff}#container2-block{background:#e8ffea;border-top-color:#7ed96a}
+#container3-block{background:#fff8d9;border-top-color:#f2d94b}#container4-block{background:#ffeef2;border-top-color:#ff9cc1}
+#overlay{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;z-index:999}
+.dialog{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1000;background:#fff;padding:14px;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,0.2);width:320px}
+.dialog .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.dialog .footer{display:flex;justify-content:center;gap:8px;margin-top:12px}
+.pill-counter{display:inline-flex;align-items:center;gap:8px}input[type="time"]{padding:6px}label{font-size:14px}.small-muted{color:#666;font-size:13px}
+.top-actions{max-width:1000px;margin:12px auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}button.active{background:#444;color:#fff}
+.phone-setup{display:flex;gap:8px;align-items:center} .phone-setup input{padding:8px;border:1px solid #ccc;border-radius:4px}
+.upload-area{margin-top:10px;border-top:1px dashed #ccc;padding-top:10px;display:flex;align-items:center;gap:10px}
+</style></head><body><header><div style="font-size:28px;display:flex;align-items:center;justify-content:center;gap:8px"><span>💊</span><h1>Pill Dispenser</h1></div>
+<div class="byline">Yasir</div></header>
+<div class="top-actions">
+  <div class="phone-setup">
+    <input type="text" id="globalPhone" placeholder="+919876543210">
+    <button onclick="savePhone()">Save Number</button>
+  </div>
+  <div>
+    <button onclick="testSchedule()">Run Test</button><button onclick="setRTC()">Sync RTC</button>
+  </div>
+</div>
+<div class="container-grid">
+<div class="container-block" id="container1-block">
+  <div class="container-header"><h2>Container 1</h2><div class="actions"><button onclick="openScheduleDialog(1,null)">+ Schedule</button><button onclick="openSettingsDialog(1)">Settings</button></div></div>
+  <table id="container1-table"><thead><tr><th>Days</th><th>Pills</th><th>Times</th><th></th></tr></thead><tbody></tbody></table>
+  <div class="upload-area"><label>Voice Alert:</label><input type="file" id="file1" accept=".wav"><button onclick="uploadVoice(1)">Upload</button></div>
+</div>
+<div class="container-block" id="container2-block">
+  <div class="container-header"><h2>Container 2</h2><div class="actions"><button onclick="openScheduleDialog(2,null)">+ Schedule</button><button onclick="openSettingsDialog(2)">Settings</button></div></div>
+  <table id="container2-table"><thead><tr><th>Days</th><th>Pills</th><th>Times</th><th></th></tr></thead><tbody></tbody></table>
+   <div class="upload-area"><label>Voice Alert:</label><input type="file" id="file2" accept=".wav"><button onclick="uploadVoice(2)">Upload</button></div>
+</div>
+<div class="container-block disabled" id="container3-block"><div class="container-header"><h2>Container 3 (Disabled)</h2><div class="actions"><button disabled>+ Add</button></div></div></div></div>
+<div id="overlay"></div>
+<div id="scheduleDialog" class="dialog">
+<div class="header"><strong id="dialogTitle">Add Schedule</strong><span style="cursor:pointer" onclick="closeScheduleDialog()">✕</span></div><div>
+<div style="margin-bottom:8px"><button id="everydayBtn" onclick="toggleEveryday()">Everyday</button></div>
+<div class="days-grid" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:8px">
+<button data-day="Monday" onclick="toggleDay(this)">Mon</button><button data-day="Tuesday" onclick="toggleDay(this)">Tue</button>
+<button data-day="Wednesday" onclick="toggleDay(this)">Wed</button><button data-day="Thursday" onclick="toggleDay(this)">Thu</button>
+<button data-day="Friday" onclick="toggleDay(this)">Fri</button><button data-day="Saturday" onclick="toggleDay(this)">Sat</button>
+<button data-day="Sunday" onclick="toggleDay(this)">Sun</button></div><div style="margin-bottom:8px"><label>Pill Count:</label><div class="pill-counter">
+<button onclick="decrementPillCount()">−</button><input id="pillCount" value="1" readonly style="width:48px;text-align:center"/><button onclick="incrementPillCount()">+</button></div></div>
+<div id="timeInputs"></div></div><div class="footer"><button onclick="saveSchedule()">Save</button><button onclick="closeScheduleDialog()">Cancel</button></div></div>
+<div id="settingsDialog" class="dialog"><div class="header"><strong id="settingsDialogTitle">Container Settings</strong><span style="cursor:pointer" onclick="closeSettingsDialog()">✕</span></div>
+<div><div style="margin-bottom:8px"><label>Motor speed PWM: <span id="motorSpeedValue">128</span></label><br>
+<input id="motorSpeed" type="range" min="0" max="255" value="128" oninput="document.getElementById('motorSpeedValue').textContent=this.value"></div>
+<div style="margin-bottom:8px"><label>Trigger threshold: <span id="triggerThresholdValue">50</span></label><br>
+<input id="triggerThreshold" type="range" min="0" max="3000" value="50" oninput="document.getElementById('triggerThresholdValue').textContent=this.value"></div>
+<div style="display:flex;gap:8px;justify-content:center"><button onclick="saveSettings()">Save</button><button onclick="closeSettingsDialog()">Cancel</button></div></div></div>
+)rawliteral";
+
+const char UI_PART_2[] PROGMEM = R"rawliteral(
+<script>
+var schedulesData=[];var settingsData={};var currentContainer=null;var editingScheduleId=null;var currentSettingsContainer=null;
+function loadSchedules(){fetch('/getSchedules').then(r=>r.json()).then(d=>{schedulesData=d||[];renderAllSchedules()}).catch(()=>{schedulesData=[];renderAllSchedules()})}
+function loadSettings(){fetch('/getSettings').then(r=>r.json()).then(d=>{settingsData=d||{};
+if(settingsData.phone) document.getElementById('globalPhone').value = settingsData.phone;
+}).catch(()=>{settingsData={}})}
+function saveSchedulesToServer(){fetch('/saveSchedules',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(schedulesData)})}
+function saveSettingsToServer(){fetch('/saveSettings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(settingsData)})}
+function savePhone(){var p=document.getElementById('globalPhone').value; settingsData.phone=p; saveSettingsToServer(); alert("Phone number saved!");}
+
+function uploadVoice(c){
+  var fi=document.getElementById('file'+c);
+  if(!fi.files.length){alert("Select .wav file");return;}
+  var fd=new FormData();
+  fd.append("file",fi.files[0]);
+  fetch('/uploadVoice?container='+c, {method:'POST', body:fd}).then(r=>r.text()).then(t=>alert(t)).catch(e=>alert("Upload Failed"));
+}
+
+function openScheduleDialog(c,s){currentContainer=c;editingScheduleId=s;resetDialog();if(s!==null){var x=schedulesData.find(i=>i.id===s);if(x){document.getElementById('pillCount').value=x.pillCount||1;updateTimeFields();var ti=document.querySelectorAll('#timeInputs input[type="time"]');(x.times||[]).forEach((tv,i)=>{if(ti[i])ti[i].value=tv});var all=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];if(all.every(d=>x.days&&x.days.indexOf(d)!==-1))document.getElementById('everydayBtn').classList.add('active');document.querySelectorAll('.days-grid button').forEach(b=>{if(x.days&&x.days.indexOf(b.getAttribute('data-day'))!==-1)b.classList.add('active')})}}document.getElementById('overlay').style.display='block';document.getElementById('scheduleDialog').style.display='block'}
+function closeScheduleDialog(){document.getElementById('overlay').style.display='none';document.getElementById('scheduleDialog').style.display='none'}
+function resetDialog(){document.getElementById('everydayBtn').classList.remove('active');document.querySelectorAll('.days-grid button').forEach(b=>b.classList.remove('active'));document.getElementById('pillCount').value=1;updateTimeFields()}
+function toggleDay(b){b.classList.toggle('active')}
+function toggleEveryday(){var b=document.getElementById('everydayBtn');b.classList.toggle('active');if(b.classList.contains('active'))document.querySelectorAll('.days-grid button').forEach(x=>x.classList.remove('active'))}
+function updateTimeFields(){var p=parseInt(document.getElementById('pillCount').value)||1;var d=document.getElementById('timeInputs');d.innerHTML='';for(var i=1;i<=p;i++){var x=document.createElement('div');x.innerHTML='Time #'+i+': <input type="time" value="08:00">';d.appendChild(x)}}
+function incrementPillCount(){var e=document.getElementById('pillCount');e.value=(parseInt(e.value)||1)+1;updateTimeFields()}
+function decrementPillCount(){var e=document.getElementById('pillCount');var v=parseInt(e.value)||1;if(v>1)e.value=v-1;updateTimeFields()}
+function saveSchedule(){var days=[];if(document.getElementById('everydayBtn').classList.contains('active')){days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]}else{document.querySelectorAll('.days-grid button.active').forEach(b=>days.push(b.getAttribute('data-day')))}var p=parseInt(document.getElementById('pillCount').value)||1;var times=[];document.querySelectorAll('#timeInputs input[type="time"]').forEach(i=>{if(i.value)times.push(i.value)});if(editingScheduleId===null){schedulesData.push({id:Date.now(),container:currentContainer,days:days,pillCount:p,times:times})}else{schedulesData=schedulesData.map(s=>{if(s.id===editingScheduleId){s.container=currentContainer;s.days=days;s.pillCount=p;s.times=times}return s})}saveSchedulesToServer();closeScheduleDialog();renderAllSchedules()}
+function deleteSchedule(id){schedulesData=schedulesData.filter(s=>s.id!==id);saveSchedulesToServer();renderAllSchedules()}
+function renderAllSchedules(){for(var c=1;c<=4;c++){var tb=document.querySelector('#container'+c+'-table tbody');if(tb)tb.innerHTML=''}schedulesData.forEach(s=>{var tb=document.querySelector('#container'+s.container+'-table tbody');if(!tb)return;var tr=document.createElement('tr');tr.innerHTML='<td>'+(s.days||[]).join(', ')+'</td><td>'+(s.pillCount||0)+'</td><td>'+(s.times||[]).join(', ')+'</td>';var a=document.createElement('td');if(s.container<=2){a.innerHTML='<button onclick="openScheduleDialog('+s.container+','+s.id+')">Edit</button> <button onclick="deleteSchedule('+s.id+')">Delete</button>'}else{a.innerHTML='<span style="color:#999">Disabled</span>'}tr.appendChild(a);tb.appendChild(tr)})}
+function openSettingsDialog(c){if(c>2)return;currentSettingsContainer=c;var s=settingsData[c]||{};document.getElementById('motorSpeed').value=(s.motorSpeed!==undefined)?s.motorSpeed:128;document.getElementById('triggerThreshold').value=(s.triggerThreshold!==undefined)?s.triggerThreshold:50;document.getElementById('motorSpeedValue').textContent=document.getElementById('motorSpeed').value;document.getElementById('triggerThresholdValue').textContent=document.getElementById('triggerThreshold').value;document.getElementById('overlay').style.display='block';document.getElementById('settingsDialog').style.display='block'}
+function closeSettingsDialog(){document.getElementById('overlay').style.display='none';document.getElementById('settingsDialog').style.display='none'}
+function saveSettings(){var m=parseInt(document.getElementById('motorSpeed').value);var t=parseInt(document.getElementById('triggerThreshold').value);settingsData[currentSettingsContainer]={motorSpeed:m,triggerThreshold:t};saveSettingsToServer();closeSettingsDialog()}
+function testSchedule(){fetch('/testSchedule').then(r=>r.text()).then(t=>alert(t)).catch(()=>alert('Error'))}
+function setRTC(){fetch('/setRTC').then(r=>r.text()).then(t=>alert(t)).catch(()=>alert('Failed'))}
+window.addEventListener('load',function(){loadSchedules();loadSettings()});
+</script></body></html>
+)rawliteral";
