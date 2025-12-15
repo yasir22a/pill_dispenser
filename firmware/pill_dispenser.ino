@@ -1,13 +1,10 @@
 /**************************************************************************
 
- * Pill Dispenser
-
- /*
  Smart Pill Dispenser
  Author: Mohd Yasir
  License: MIT
  GitHub: https://github.com/yasir22a/pill_dispenser
-*/
+
 
  **************************************************************************/
 
