@@ -61,7 +61,7 @@ GSM UART: GPIO 16, 17
 
 RTC I2C: GPIO 21 (SDA), GPIO 22 (SCL)
 
-Motors: GPIO in1 18, in2 19
+Motors: GPIO in1 18, in3 19
 
 
 //////////////////////////////////////////
