@@ -1,0 +1,109 @@
+💊 Pill Dispenser – Hardware Connections (Simple Explanation)
+1. Controller
+
+The complete system is controlled using an ESP32 development board.
+It handles scheduling, motor control, voice alerts, SMS alerts, and the web interface.
+
+2. Motors (Pill Dispensing Mechanism)
+
+Two DC geared motors are used, one for each pill container.
+Since the ESP32 cannot drive motors directly, a motor driver (L298N or L293D) is used.
+
+Motor for Container 1 is controlled using GPIO 18
+
+Motor for Container 2 is controlled using GPIO 19
+
+Motors are powered using an external 9–12 V supply
+
+Motor driver ground is connected to ESP32 ground (common ground)
+
+3. Pill Detection Sensor
+
+An IR sensor is used to detect when a pill has fallen.
+This helps stop the motor automatically after dispensing.
+
+Sensor output is connected to GPIO 34
+
+Sensor power is taken from 3.3 V or 5 V
+
+Ground is connected to ESP32 ground
+
+4. RTC Module (Real Time Clock)
+
+A DS1307 / DS3231 RTC module is used to keep accurate time, even when power is off.
+
+SDA pin is connected to GPIO 21
+
+SCL pin is connected to GPIO 22
+
+RTC is powered using 3.3 V
+
+Ground is connected to ESP32 ground
+
+5. Voice Alert System
+
+Voice reminders are played using a MAX98357A I2S audio amplifier and a speaker.
+
+Audio data (DIN) → GPIO 27
+
+Bit clock (BCLK) → GPIO 26
+
+Word select (LRC) → GPIO 25
+
+Audio module is powered using 5 V
+
+A 4 Ω, 3 W speaker is connected to the amplifier output
+
+6. GSM Module (SIM800L)
+
+A SIM800L GSM module is used to send SMS alerts when medicine time arrives.
+
+SIM800L TX → GPIO 16
+
+SIM800L RX → GPIO 17
+
+GSM module is powered using a separate 3.8–4.2 V supply
+
+Ground is connected to ESP32 ground
+
+⚠ The GSM module requires high current (up to 2 A), so it must not be powered from the ESP32.
+
+7. Wi-Fi Communication
+
+The ESP32’s built-in Wi-Fi is used to:
+
+Access the web interface
+
+Set schedules
+
+Upload voice files
+
+Sync time via the internet
+
+No external wiring is required for Wi-Fi.
+
+8. Internal Storage
+
+The ESP32 internal flash memory (LittleFS) is used to store:
+
+Medicine schedules
+
+User settings
+
+Recorded voice alert files
+
+9. Power Supply Arrangement
+
+Buck converter provides 4.0 V for the GSM module
+
+All grounds are connected together
+
+10. Important Points
+
+Motors are always driven through a motor driver
+
+GSM module must have a stable external power supply
+
+Common ground is mandatory for all modules
+
+Correct ESP32 partition scheme is required for audio storage
